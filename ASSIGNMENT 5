@@ -1,0 +1,107 @@
+/*
+ * ===================== LAB ASSIGNMENT 5 =====================
+ * Name    : Abhishek Diggikar
+ * Topic   : Binary Search Tree (BST) and Non-Recursive Traversals
+ *
+ * Problem Statement:
+ * Implement a Binary Search Tree in C++ using a struct and dynamic
+ * memory allocation, and perform the following traversals WITHOUT
+ * recursion (using an explicit stack from the STL):
+ *   1. Non-Recursive Inorder Traversal  (Left - Root - Right)
+ *   2. Non-Recursive Preorder Traversal (Root - Left - Right)
+ *
+ * Features:
+ *   - insert() places values in the correct BST position
+ *     (smaller values go left, larger values go right)
+ *   - Duplicate values are not inserted
+ *   - Traversals use std::stack<Node*> instead of function calls
+ *
+ * Working of main():
+ *   - Inserts 50, 30, 70, 20, 40, 60, 80 into the BST
+ *   - Displays the inorder and preorder traversals
+ *
+ * Expected Output:
+ *   Non-Recursive Inorder Traversal:  20 30 40 50 60 70 80
+ *   Non-Recursive Preorder Traversal: 50 30 20 40 70 60 80
+ * ============================================================
+ */
+
+#include <iostream>
+#include <stack>
+using namespace std;
+
+struct Node {
+    int data;
+    Node *left;
+    Node *right;
+};
+
+Node* newNode(int data) {
+    Node* node = new Node();
+    node->data = data;
+    node->left = nullptr;
+    node->right = nullptr;
+    return node;
+}
+
+Node* insert(Node* root, int data) {
+    if (root == NULL) {
+        return newNode(data);
+    }
+    if (data < root->data)
+        root->left = insert(root->left, data);
+    else if (data > root->data)
+        root->right = insert(root->right, data);
+    else
+        cout << "Duplicate value not inserted: " << data << endl;
+    return root;
+}
+
+// Non-recursive Inorder Traversal (Left -> Root -> Right)
+void inorderNonRecursive(Node* root) {
+    stack<Node*> st;
+    Node* current = root;
+
+    while (current != NULL || !st.empty()) {
+        while (current != NULL) {
+            st.push(current);
+            current = current->left;
+        }
+        current = st.top();
+        st.pop();
+        cout << current->data << " ";
+        current = current->right;
+    }
+}
+
+// Non-recursive Preorder Traversal (Root -> Left -> Right)
+void preorderNonRecursive(Node* root) {
+    if (root == NULL) return;
+    stack<Node*> st;
+    st.push(root);
+
+    while (!st.empty()) {
+        Node* current = st.top();
+        st.pop();
+        cout << current->data << " ";
+
+        if (current->right != NULL)
+            st.push(current->right);
+        if (current->left != NULL)
+            st.push(current->left);
+    }
+}
+
+int main() {
+    Node* root = NULL;
+    int values[] = {50, 30, 70, 20, 40, 60, 80};
+    int n = sizeof(values) / sizeof(values[0]);
+
+    for (int i = 0; i < n; i++)
+        root = insert(root, values[i]);
+
+    cout << "Non-Recursive Inorder Traversal:  "; inorderNonRecursive(root);  cout << endl;
+    cout << "Non-Recursive Preorder Traversal: "; preorderNonRecursive(root); cout << endl;
+
+    return 0;
+}
