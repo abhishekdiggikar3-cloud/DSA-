@@ -1,0 +1,92 @@
+/*
+ * ===================== LAB ASSIGNMENT 4 =====================
+ * Name    : Abhishek Diggikar
+ * Topic   : Binary Tree and its Traversals
+ *
+ * Problem Statement:
+ * Implement a Binary Tree in C++ using a struct and dynamic memory
+ * allocation, and perform the following recursive traversals:
+ *   1. Inorder Traversal   (Left - Node - Right)
+ *   2. Preorder Traversal  (Node - Left - Right)
+ *   3. Postorder Traversal (Left - Right - Node)
+ *
+ * Features:
+ *   - Each node stores an integer (data), a left pointer and a right pointer
+ *   - A helper function newNode() creates and initializes a node
+ *   - Node values 1-6 are printed as the letters A-F
+ *
+ * Sample Tree:
+ *            A
+ *          /   \
+ *         B     C
+ *        / \     \
+ *       D   E     F
+ *
+ * Expected Output:
+ *   Inorder Traversal   (L-N-R): D B E A C F
+ *   Preorder Traversal  (N-L-R): A B D E C F
+ *   Postorder Traversal (L-R-N): D E B F C A
+ * ============================================================
+ */
+
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node *left;
+    Node *right;
+};
+
+Node* newNode(int data) {
+    Node* node = new Node();
+    node->data = data;
+    node->left = nullptr;
+    node->right = nullptr;
+    return node;
+}
+
+// Builds the sample tree A-B-C-D-E-F
+Node* buildSampleTree() {
+    Node* A = newNode(1); // A
+    Node* B = newNode(2); // B
+    Node* C = newNode(3); // C
+    Node* D = newNode(4); // D
+    Node* E = newNode(5); // E
+    Node* F = newNode(6); // F
+
+    A->left = B; A->right = C;
+    B->left = D; B->right = E;
+    C->right = F;
+
+    return A;
+}
+
+void inorder(Node* root) {
+    if (root == NULL) return;
+    inorder(root->left);
+    cout << (char)('A' + root->data - 1) << " ";
+    inorder(root->right);
+}
+
+void preorder(Node* root) {
+    if (root == NULL) return;
+    cout << (char)('A' + root->data - 1) << " ";
+    preorder(root->left);
+    preorder(root->right);
+}
+
+void postorder(Node* root) {
+    if (root == NULL) return;
+    postorder(root->left);
+    postorder(root->right);
+    cout << (char)('A' + root->data - 1) << " ";
+}
+
+int main() {
+    Node* root = buildSampleTree();
+    cout << "Inorder Traversal   (L-N-R): "; inorder(root);   cout << endl;
+    cout << "Preorder Traversal  (N-L-R): "; preorder(root);  cout << endl;
+    cout << "Postorder Traversal (L-R-N): "; postorder(root); cout << endl;
+    return 0;
+}
