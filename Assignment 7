@@ -1,0 +1,119 @@
+// Assignment No. 7: Graph using Adjacency Matrix and Depth First Search (DFS)
+// Scenario: Road Network Exploration
+
+#include <iostream>
+using namespace std;
+
+class Graph
+{
+    int vertices;
+    int adj[20][20];
+    bool visited[20];
+
+public:
+    void createGraph();
+    void displayGraph();
+    void DFS(int start);
+    void resetVisited();
+    int getVertices() { return vertices; }
+};
+
+void Graph::createGraph()
+{
+    int edges, u, v;
+
+    cout << "Enter number of intersections (vertices, max 20): ";
+    cin >> vertices;
+    while (vertices < 1 || vertices > 20)
+    {
+        cout << "Invalid. Enter a value between 1 and 20: ";
+        cin >> vertices;
+    }
+
+    // Initialize matrix and visited array
+    for (int i = 0; i < vertices; i++)
+    {
+        visited[i] = false;
+        for (int j = 0; j < vertices; j++)
+            adj[i][j] = 0;
+    }
+
+    cout << "Enter number of roads (edges): ";
+    cin >> edges;
+
+    cout << "Enter each road as two intersections (0 to " << vertices - 1 << "):\n";
+    for (int k = 1; k <= edges; k++)
+    {
+        cout << "Road " << k << ": ";
+        cin >> u >> v;
+
+        if (u < 0 || u >= vertices || v < 0 || v >= vertices)
+        {
+            cout << "Invalid intersection! Try again.\n";
+            k--;
+            continue;
+        }
+        adj[u][v] = 1;
+        adj[v][u] = 1; // undirected graph
+    }
+}
+
+void Graph::displayGraph()
+{
+    cout << "\nAdjacency Matrix (Road Network):\n   ";
+    for (int j = 0; j < vertices; j++)
+        cout << j << " ";
+    cout << "\n";
+
+    for (int i = 0; i < vertices; i++)
+    {
+        cout << i << "  ";
+        for (int j = 0; j < vertices; j++)
+            cout << adj[i][j] << " ";
+        cout << "\n";
+    }
+}
+
+void Graph::resetVisited()
+{
+    for (int i = 0; i < vertices; i++)
+        visited[i] = false;
+}
+
+void Graph::DFS(int v)
+{
+    visited[v] = true;      // mark current as visited
+    cout << v << " ";       // display current vertex
+
+    for (int i = 0; i < vertices; i++)
+    {
+        if (adj[v][i] == 1 && !visited[i])
+            DFS(i);         // go deeper, backtrack automatically
+    }
+}
+
+int main()
+{
+    Graph cityRoad;
+
+    cityRoad.createGraph();
+    cityRoad.displayGraph();
+
+    int start;
+    cout << "\nEnter starting intersection: ";
+    cin >> start;
+
+    while (start < 0 || start >= cityRoad.getVertices())
+    {
+        cout << "Invalid. Enter a value between 0 and "
+             << cityRoad.getVertices() - 1 << ": ";
+        cin >> start;
+    }
+
+    cityRoad.resetVisited();
+    cout << "\nDFS traversal (order of intersections visited): ";
+    cityRoad.DFS(start);
+    cout << endl;
+
+    return 0;
+}
