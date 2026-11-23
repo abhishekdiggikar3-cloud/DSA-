@@ -1,0 +1,173 @@
+// Assignment No. 8: Graph using Adjacency List and Breadth First Search (BFS)
+// Scenario: Social Network Connectivity
+
+#include <iostream>
+using namespace std;
+
+#define MAX 20
+
+class Graph
+{
+    int vertices;
+    int adj[MAX][MAX]; // adjacency list: adj[i][0..count[i]-1] = friends of i
+    int count[MAX];    // number of friends of each user
+    bool visited[MAX];
+    bool created;
+
+public:
+    Graph() : vertices(0), created(false) {}
+    void createGraph();
+    void displayGraph();
+    void BFS(int start);
+    bool isCreated() { return created; }
+    int getVertices() { return vertices; }
+};
+
+void Graph::createGraph()
+{
+    int edges, u, v;
+
+    cout << "Enter number of users (max " << MAX << "): ";
+    cin >> vertices;
+    while (vertices < 1 || vertices > MAX)
+    {
+        cout << "Invalid. Enter a value between 1 and " << MAX << ": ";
+        cin >> vertices;
+    }
+
+    for (int i = 0; i < vertices; i++)
+        count[i] = 0;
+
+    cout << "Enter number of friendships: ";
+    cin >> edges;
+
+    cout << "Enter each friendship as two users (0 to " << vertices - 1 << "):\n";
+    for (int k = 1; k <= edges; k++)
+    {
+        cout << "Friendship " << k << ": ";
+        cin >> u >> v;
+
+        if (u < 0 || u >= vertices || v < 0 || v >= vertices || u == v)
+        {
+            cout << "Invalid friendship! Try again.\n";
+            k--;
+            continue;
+        }
+        if (count[u] >= MAX || count[v] >= MAX)
+        {
+            cout << "List full for a user! Try again.\n";
+            k--;
+            continue;
+        }
+
+        adj[u][count[u]++] = v; // add v to u's list
+        adj[v][count[v]++] = u; // mutual friendship
+    }
+    created = true;
+    cout << "Social network created.\n";
+}
+
+void Graph::displayGraph()
+{
+    cout << "\nAdjacency List:\n";
+    for (int i = 0; i < vertices; i++)
+    {
+        cout << i << " -> ";
+        for (int j = 0; j < count[i]; j++)
+            cout << adj[i][j] << " ";
+        cout << "\n";
+    }
+}
+
+void Graph::BFS(int start)
+{
+    int queue[MAX];
+    int front = 0, rear = 0;
+    int level[MAX];
+
+    // Step 1: mark all users unvisited
+    for (int i = 0; i < vertices; i++)
+    {
+        visited[i] = false;
+        level[i] = -1;
+    }
+
+    // Step 2: mark start as visited and enqueue it
+    visited[start] = true;
+    level[start] = 0;
+    queue[rear++] = start;
+
+    cout << "\nUsers connected level by level:\n";
+
+    // Step 3: process until queue is empty
+    while (front < rear)
+    {
+        int current = queue[front++];
+        cout << current << " (level " << level[current] << ")\n";
+
+        for (int i = 0; i < count[current]; i++)
+        {
+            int next = adj[current][i];
+            if (!visited[next])
+            {
+                visited[next] = true; // mark BEFORE enqueuing
+                level[next] = level[current] + 1;
+                queue[rear++] = next;
+            }
+        }
+    }
+}
+
+int main()
+{
+    Graph socialNetwork;
+    int choice = 0, startUser;
+
+    do
+    {
+        cout << "\n===== SOCIAL NETWORK =====\n";
+        cout << "1. Create Graph\n";
+        cout << "2. Display Adjacency List\n";
+        cout << "3. Perform BFS\n";
+        cout << "4. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            socialNetwork.createGraph();
+            break;
+
+        case 2:
+            if (!socialNetwork.isCreated())
+                cout << "Create the graph first.\n";
+            else
+                socialNetwork.displayGraph();
+            break;
+
+        case 3:
+            if (!socialNetwork.isCreated())
+            {
+                cout << "Create the graph first.\n";
+                break;
+            }
+            cout << "Enter starting user: ";
+            cin >> startUser;
+            if (startUser < 0 || startUser >= socialNetwork.getVertices())
+                cout << "Invalid user.\n";
+            else
+                socialNetwork.BFS(startUser);
+            break;
+
+        case 4:
+            cout << "Program terminated.\n";
+            break;
+
+        default:
+            cout << "Invalid choice.\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}
