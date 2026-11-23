@@ -1,0 +1,82 @@
+* Assignment No 7: Represent a given graph using adjacency list or array and
+   generate a minimum spanning tree using Kruskal's or Prim's algorithm */
+// Implementation of Prim's Algorithm Using Adjacency Matrix.
+
+#include <iostream>
+#include <climits>      // for INT_MAX
+using namespace std;
+
+#define V 7             // number of vertices in graph
+
+int main()
+{
+    // adjacency matrix representing the graph (0 = no edge)
+    int G[V][V] =
+    {
+        {0, 28, 0,  0,  0,  10, 0 },
+        {28, 0, 16, 0,  0,  0,  14},
+        {0, 16, 0,  12, 0,  0,  0 },
+        {0, 0,  12, 0,  22, 0,  18},
+        {0, 0,  0,  22, 0,  25, 24},
+        {10, 0, 0,  0,  25, 0,  0 },
+        {0, 14, 0,  18, 24, 0,  0 }
+    };
+
+    int edge = 0;           // number of edges in MST so far (MST has V-1 edges)
+    bool visit[V];          // tracks vertices already in the MST
+
+    for (int i = 0; i < V; i++)
+        visit[i] = false;
+
+    visit[0] = true;        // start from vertex 0
+
+    int x, y;               // row and column of the chosen edge
+    int totalWeight = 0;
+
+    cout << "\n Result of Minimum Spanning Tree using Prim's Algorithm\n\n";
+    cout << " Edge" << "        : " << "Weight\n ====================\n";
+
+    while (edge < V - 1)
+    {
+        int min = INT_MAX;
+        x = -1;
+        y = -1;
+
+        for (int i = 0; i < V; i++)
+        {
+            if (visit[i])
+            {
+                for (int j = 0; j < V; j++)
+                {
+                    // j not in MST and an edge exists between i and j
+                    if (!visit[j] && G[i][j])
+                    {
+                        if (min > G[i][j])
+                        {
+                            min = G[i][j];
+                            x = i;
+                            y = j;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (x == -1)        // no edge found: graph is disconnected
+        {
+            cout << " Graph is not connected!\n";
+            return 1;
+        }
+
+        cout << " " << x << " ---> " << y << "   :  " << G[x][y] << endl;
+
+        totalWeight += G[x][y];
+        visit[y] = true;
+        edge++;
+    }
+
+    cout << "======================\n";
+    cout << " Total weight of MST : " << totalWeight << endl;
+
+    return 0;
+}   // <-- this closing brace was missing
