@@ -1,0 +1,146 @@
+/*
+ * ===================== LAB ASSIGNMENT 1 =====================
+ * Name    : Abhishek Diggikar
+ * Topic   : Stack implementation using an array (Library Books)
+ *
+ * Problem Statement:
+ * Implement a Stack ADT using an array and a class in C++ to
+ * simulate a library book stack. The program provides a menu with:
+ *   1. Return Book  (Push)  - add a book on top of the stack
+ *   2. Arrange Book (Pop)   - remove the top book and put it on the shelf
+ *   3. Top Book     (Peek)  - view the top book without removing it
+ *   4. Display Stack        - show all books from top to bottom
+ *   5. Exit
+ *
+ * Features:
+ *   - Fixed capacity of 5 books (MAX)
+ *   - Overflow check ("Stack is full")
+ *   - Underflow check ("Stack is empty")
+ *   - Menu-driven program using do-while and switch
+ * ============================================================
+ */
+
+#include <iostream>
+#include <string>
+#include <limits> // Required for numeric_limits
+using namespace std;
+
+#define MAX 5
+
+class Stack
+{
+private:
+    string books[MAX];
+    int top;
+
+public:
+    Stack()
+    {
+        top = -1;
+    }
+
+    // Return Book (Push)
+    void push(string book)
+    {
+        if (top == MAX - 1)
+        {
+            cout << "Stack is full.\n";
+            return;
+        }
+        top++;
+        books[top] = book;
+        cout << book << " returned successfully.\n";
+    }
+
+    // Arrange Book (Pop)
+    void pop()
+    {
+        if (top == -1)
+        {
+            cout << "Stack is empty.\n";
+            return;
+        }
+        cout << books[top] << " arranged on the shelf.\n";
+        top--;
+    }
+
+    // Top Book (Peek)
+    void peek()
+    {
+        if (top == -1)
+        {
+            cout << "No books in the stack.\n";
+            return;
+        }
+        cout << "Top Book: " << books[top] << endl;
+    }
+
+    // Display Stack
+    void display()
+    {
+        if (top == -1)
+        {
+            cout << "Stack is empty.\n";
+            return;
+        }
+
+        cout << "\nBooks in Stack (Top to Bottom):\n";
+        for (int i = top; i >= 0; i--)
+        {
+            cout << books[i] << endl;
+        }
+    }
+};
+
+int main()
+{
+    Stack s;
+    int choice;
+    string book;
+
+    do
+    {
+        cout << "\n===== Library Stack Menu =====\n";
+        cout << "1. Return Book (Push)\n";
+        cout << "2. Arrange Book (Pop)\n";
+        cout << "3. Top Book (Peek)\n";
+        cout << "4. Display Stack\n";
+        cout << "5. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        // CRITICAL FIX: Ignore the newline character left in the buffer by 'cin >> choice'
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        switch (choice)
+        {
+        case 1:
+            cout << "Enter Book Name: ";
+            getline(cin, book);
+            s.push(book);
+            break;
+
+        case 2:
+            s.pop();
+            break;
+
+        case 3:
+            s.peek();
+            break;
+
+        case 4:
+            s.display();
+            break;
+
+        case 5:
+            cout << "Exiting...\n";
+            break;
+
+        default:
+            cout << "Invalid Choice!\n";
+        }
+
+    } while (choice != 5);
+
+    return 0;
+}
